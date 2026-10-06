@@ -1,0 +1,36 @@
+# Runtime parameters — loaded by the agent registry and passed as Graph(config=...).
+# Separate from config/agent.yaml (the static registration manifest, identity only).
+#
+# Every value below is validated once in src/graph/graph.py (declared_settings)
+# and then travels to the node that consumes it, so changing a number here
+# changes the agent's behaviour end to end. A key that is absent, of the wrong
+# type, non-finite or out of range falls back to the pipeline's built-in floor
+# rather than propagating a value no consumer could use.
+
+max_retry: 3
+timeout_s: 30
+
+# Anomaly detection thresholds, as percentages of the baseline.
+detection:
+  # A metric is flagged once its deviation from the baseline reaches this size.
+  deviation_threshold_pct: 15.0
+  # Severity bands, applied to the absolute deviation of a flagged metric.
+  severity_high_pct: 30.0
+  severity_critical_pct: 50.0
+
+# Absolute professional-services benchmarks used when the caller supplies no
+# historical baseline of its own. These are independent of the values under
+# test: a baseline derived from the current value can only ever produce a
+# constant deviation, which is not a detection.
+baselines:
+  target_utilization_rate: 0.75
+  expected_sla_breach_count: 0.5
+  expense_ratio_benchmark: 0.28
+  # Billable hours expected from one person over a standard quarter.
+  standard_billable_hours_per_person: 480.0
+  standard_rate_jpy_per_hour: 12000.0
+
+# Bounds on the caller-data contract.
+caller_contract:
+  max_metrics: 32
+  max_identifier_length: 32
